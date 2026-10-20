@@ -63,6 +63,14 @@
                     <input type="text" id="runner-name" placeholder="Prénom Nom" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-2 border focus:border-red-500 focus:ring-red-500 text-sm">
                 </div>
                 <div>
+                    <label for="runner-sex" class="block text-xs font-medium text-gray-700">Sexe du Coureur</label>
+                    <select id="runner-sex" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-2 border focus:border-red-500 focus:ring-red-500 text-sm">
+                        <option value="">— Choisir —</option>
+                        <option value="F">Fille</option>
+                        <option value="M">Garçon</option>
+                    </select>
+                </div>
+                <div>
                     <label for="laps-per-shooting" class="block text-xs font-medium text-gray-700">Tours entre chaque tir</label>
                     <input type="number" id="laps-per-shooting" value="3" min="1" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-2 border focus:border-red-500 focus:ring-red-500 text-sm">
                 </div>
@@ -206,6 +214,7 @@
         // Variables d'état
         let state = 'initial'; // 'initial', 'running', 'shooting', 'finished'
         let runnerName = '';
+        let runnerSex = ''; // 'F' ou 'M'
         let lapCountPerShooting = 0;
         let shootingSessionsTotal = 0;
         let lapDistanceM = 0;
@@ -241,6 +250,7 @@
             missedShotsDisplay: $('missed-shots-display'),
             // Paramètres
             runnerNameInput: $('runner-name'),
+            runnerSexInput: $('runner-sex'),
             lapsInput: $('laps-per-shooting'),
             sessionsInput: $('shooting-sessions'),
             distanceInput: $('lap-distance'),
@@ -461,6 +471,14 @@
 
             // Récupération des paramètres
             runnerName = elements.runnerNameInput.value || 'Anonyme';
+            runnerSex = elements.runnerSexInput.value;
+
+            // Le sexe est indispensable pour appliquer le barème filles / garçons.
+            if (!runnerSex) {
+                alert("Choisis le sexe du coureur avant de démarrer.");
+                elements.runnerSexInput.focus();
+                return;
+            }
             lapCountPerShooting = parseInt(elements.lapsInput.value) || 1;
             shootingSessionsTotal = parseInt(elements.sessionsInput.value) || 1;
             lapDistanceM = parseInt(elements.distanceInput.value) || 200;
@@ -676,6 +694,7 @@
             // --- Génération du QR Code ---
             generateQRCode({
                 nom: runnerName,
+                sexe: runnerSex,
                 tempsTotal: formatTime(totalElapsedTime),
                 tempsTir: formatTime(totalShootingTime, true),
                 efficacite: `${globalSuccessRate}%`
